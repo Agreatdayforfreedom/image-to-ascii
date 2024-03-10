@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 
 typedef struct {
     uint8_t blue;
@@ -35,12 +36,13 @@ void read_bmp(const char* filename) {
     printf("offset %i\n",offset);
     fseek(file, 18, SEEK_SET);
     int width, height;
+
     fread(&width, sizeof(int), 1, file);
     fread(&height, sizeof(int), 1, file);
-    
-    
-    fseek(file, offset, SEEK_SET); 
-    size_t size = width * height;
+   
+    printf("w: %i, h: %i\n", width, height);
+
+    fseek(file, offset, SEEK_SET);
 
     RGBPixel* pixels = (RGBPixel*)malloc(bsize* sizeof(RGBPixel));
     uint8_t* grayscale = (uint8_t*)malloc(bsize* sizeof(uint8_t));
@@ -50,13 +52,19 @@ void read_bmp(const char* filename) {
     for (int i = 0; i < bsize; i++) {
         grayscale[i] = 0.2126 * pixels[i].red +  0.7152 *pixels[i].green + 0.0722 * pixels[i].blue;
     }
-         
 
-    for(int y = height - 1; y > 0; --y)
+    unsigned int max = 300;
+    int fx = 1; 
+    int fy = 1;
+
+    if(width > max) fx = ceil(width / max); 
+    if(height > max) fy = 4;
+    printf("fx: %i, fy: %i\n", fx,fy);
+    for(int y = height; y > 0; y-=fy)
     {
-        for (int x = 0; x < width; ++x) 
+        for (int x = 0; x < width; x+= fx) 
 	{
-            printf("%c", intensity_to_ascii(grayscale[x + width * y] ));
+            printf("%c", intensity_to_ascii(grayscale[x + width*y] ));
         }
         printf("\n");
     }    
@@ -69,7 +77,7 @@ void read_bmp(const char* filename) {
 
 
 int main() {
-    const char* filename = "/mnt/c/Users/Poe/Downloads/bulm.bmp";
+    const char* filename = "/mnt/c/Users/Poe/Downloads/Girl_with_a_Pearl_Earring.bmp";
     read_bmp(filename);
     return 0;
 }
