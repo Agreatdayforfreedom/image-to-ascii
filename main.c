@@ -52,13 +52,13 @@ void read_bmp(const char* filename) {
     for (int i = 0; i < bsize; i++) {
         grayscale[i] = 0.2126 * pixels[i].red +  0.7152 *pixels[i].green + 0.0722 * pixels[i].blue;
     }
-
-    unsigned int max = 300;
+    
+    unsigned int max = 90;
     int fx = 1; 
     int fy = 1;
-
+	
     if(width > max) fx = ceil(width / max); 
-    if(height > max) fy = 4;
+    if(height > max) fy = fx * 1.7;
     printf("fx: %i, fy: %i\n", fx,fy);
     for(int y = height; y > 0; y-=fy)
     {
@@ -77,7 +77,7 @@ void read_bmp(const char* filename) {
 
 
 int main() {
-    const char* filename = "/mnt/c/Users/Poe/Downloads/Girl_with_a_Pearl_Earring.bmp";
+    const char* filename = "/mnt/c/Users/Poe/Downloads/bulm.bmp";
     read_bmp(filename);
     return 0;
 }
